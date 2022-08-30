@@ -35,6 +35,7 @@ class Producto{
     }
 };
 
+
 document.getElementById("form-productos").addEventListener("submit", function(e){
     // obtengo los valores del formulario ingresados por el usuario
     let obtenerNombreProducto   = document.getElementById("nombre").value;
@@ -214,29 +215,74 @@ function validarEntero(valor){
 }
 
 ///Carrito
+
+class CarritoCompras{
+    constructor(nombre, precio , cantidad){
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad  = cantidad;
+    };
+
+    // set and get de las propiedades
+    setNombre(nombre){
+        this.nombre = nombre;
+    };
+
+    setPrecio(precio){
+        this.precio = precio;
+    };
+
+    setCantidad(can){
+        this.cantidad = can;
+    };
+
+    getNombre(){
+        return this.nombre;
+    };
+
+    getPrecio(){
+        return this.precio;
+    };
+
+    getStock(){
+        return this.cantidad;
+    };
+
+    eliminarProducto(elemento){
+
+    }
+};
+
+
 //operadores avanzado OR ||
 
 //localStorage.clear();
 //const carrito = JSON.parse(localStorage.getItem('carrito')) || []
 
 const carrito =  [];
-let cantidadProdCompra = 0;
+//let cantidadProdCompra = 0;
 
 function altaCarrito(e){
+    let cantidadProdCompra = 0;
     //obtengo los valores a traves de la clase de cada uno de los td.
     let filaComprar = e.target.parentNode.parentNode;
     let nombreProducto = filaComprar.querySelector(".nomProd").textContent;
     let precioProducto = filaComprar.querySelector(".precioProd").textContent;
-    let stockProducto = filaComprar.querySelector(".stockProd").textContent;
+    let stockCantidad = filaComprar.querySelector(".stockProd").textContent;
     //operadores avanzados
     //stockProducto --;
     cantidadProdCompra =1;
     
-    let productoCarrito = {
+    /*let productoCarrito = {
         nombre: nombreProducto,
         precio: precioProducto,
         cantidad: cantidadProdCompra
-    };
+    };*/
+
+    const carritoCom = new CarritoCompras ();
+    carritoCom.setNombre(nombreProducto);
+    carritoCom.setPrecio(precioProducto);
+    carritoCom.setCantidad (cantidadProdCompra);
     
     let filaCompra = e.target.parentNode.parentNode;
     let tdValorNombre = filaCompra.firstElementChild.innerHTML;
@@ -247,19 +293,18 @@ function altaCarrito(e){
     if (duplicado.length ===1){
         mostrarMensaje("Producto ya esta en carrito de compras","danger");
     }else{
-       
-        carrito.push(productoCarrito);
+        carrito.push(carritoCom);
         //let arregloJSON = JSON.stringify(carrito);
         //localStorage.setItem("carrito" , arregloJSON);
-        mostrarCarrito( carrito);
+        mostrarCarrito(carrito);
     }
     
 }
 
 
-function mostrarCarrito( carrito){
-    //let tablaOld = document.querySelector("#tbodyCarrito");
-    //tablaOld.innerHTML=""
+function mostrarCarrito(carrito){
+    let tablaOld = document.querySelector(".tbodyCar");
+    tablaOld.innerHTML=""
 
     let fila = document.createElement("tr");
 
@@ -283,7 +328,7 @@ function mostrarCarrito( carrito){
 
     let sumaElemento = document.querySelectorAll(".AgregarElementoCarrito");
     for( let boton of sumaElemento){
-        boton.addEventListener("click" , AgregarElementoCarrito);
+        boton.addEventListener("click" , AgregarEleCarrito);
     }
 }
 
@@ -306,32 +351,10 @@ function borrarProductoCarrito(e){
     filaDelete.remove();
 }
 
-function AgregarElementoCarrito(e){
-   //let filaSumaElemento = e.target.parentNode.parentNode;
-   //let tdValorNombre = filaSumaElemento.firstElementChild.innerHTML;
-    
-    
-   //let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
-    
-    //obtengo los valores a traves de la clase de cada uno de los td.
-    //let nombreProductoCarr = filaSumaElemento.querySelector(".nomProdCarrito").textContent;
-    //let precioProductoCar = parseInt(filaSumaElemento.querySelector(".precioCarrito").textContent);
-    //let cantidadProductoCar = filaSumaElemento.querySelector(".cantidadCarrito").textContent;
-  
-   /* if (duplicado.length ===1){
-        precioProductoCar +=precioProductoCar  ;
-        cantidadProductoCar++;
-        document.getElementById("preCar").value = precioProductoCar;
-        document.getElementById("cantCar").value = cantidadProductoCar;
-        let elementoIndex = carrito.findIndex((obj => obj.nombre === tdValorNombre));
-        carrito[elementoIndex].cantidad = cantidadProductoCar;
-        carrito[elementoIndex].precio= precioProductoCar;
-    }*/
-/****************************************************************************** */
-
+function AgregarEleCarrito(e){
         let filaSumaElemento = e.target.parentNode.parentNode;
         let tdValorNombre = filaSumaElemento.firstElementChild.innerHTML;
-        let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
+        let duplicado = carrito.filter(prod =>prod.getNombre() === tdValorNombre);
         
         
         //obtengo los valores a traves de la clase de cada uno de los td.
@@ -340,10 +363,17 @@ function AgregarElementoCarrito(e){
 
         precioProductoCar +=precioProductoCar  ;
         cantidadProductoCar++;
+
         if (duplicado.length ===1){
-            document.getElementById("preCar").value = precioProductoCar;
-            document.getElementById("cantCar").value = cantidadProductoCar;
-            let elementoIndex = carrito.findIndex((obj => obj.nombre === tdValorNombre));
+            elementIndex = carrito.findIndex((obj => obj.nombre === tdValorNombre));
+
+            carrito[elementIndex].cantidad = cantidadProductoCar;
+            carrito[elementIndex].precio = precioProductoCar;
+          
+            mostrarCarrito(carrito);
+            console.log(carrito[elementIndex]);
+            //document.getElementById("preCar").value = precioProductoCar;
+            //document.getElementById("cantCar").value = cantidadProductoCar;
     }
 }
 
