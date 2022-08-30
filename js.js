@@ -113,7 +113,7 @@ function agregarProductosTabla(baseProductos){
     let tablaOld = document.querySelector("#tbody");
     tablaOld.innerHTML="";
     /****************** */
-  
+
     for(let lista of baseProductos){
         let fila = document.createElement("tr");
         fila.innerHTML = `<td class="nomProd">${lista.nombre}</td>
@@ -125,9 +125,6 @@ function agregarProductosTabla(baseProductos){
         let tabla = document.getElementById("tbody");
         tabla.append(fila);
     }
-    
-
-
     
     let botonesBorrar = document.querySelectorAll(".borrarElemento");
     for( let boton of botonesBorrar){
@@ -190,7 +187,7 @@ function editarProducto(e){
     let nombreProducto = filaEditar.querySelector(".nomProd").textContent;
     let precioProducto = filaEditar.querySelector(".precioProd").textContent;
     let stockProducto = filaEditar.querySelector(".stockProd").textContent;
-  
+
     if (duplicado.length ===1){
         document.getElementById("nombre").value = nombreProducto;
         document.getElementById("precio").value = precioProducto;
@@ -218,14 +215,14 @@ function validarEntero(valor){
 
 ///Carrito
 //operadores avanzado OR ||
-localStorage.clear();
+
+//localStorage.clear();
 //const carrito = JSON.parse(localStorage.getItem('carrito')) || []
+
 const carrito =  [];
 let cantidadProdCompra = 0;
 
 function altaCarrito(e){
-
-
     //obtengo los valores a traves de la clase de cada uno de los td.
     let filaComprar = e.target.parentNode.parentNode;
     let nombreProducto = filaComprar.querySelector(".nomProd").textContent;
@@ -254,30 +251,29 @@ function altaCarrito(e){
         carrito.push(productoCarrito);
         //let arregloJSON = JSON.stringify(carrito);
         //localStorage.setItem("carrito" , arregloJSON);
-        mostrarCarrito( productoCarrito);
+        mostrarCarrito( carrito);
     }
     
 }
 
 
-function mostrarCarrito( productoCarrito){
-    let tablaOld = document.querySelector("#tbodyCarrito");
-    tablaOld.innerHTML=""
+function mostrarCarrito( carrito){
+    //let tablaOld = document.querySelector("#tbodyCarrito");
+    //tablaOld.innerHTML=""
 
     let fila = document.createElement("tr");
 
     //Desestructuración:
-    const{nombre,precio,cantidad} = productoCarrito;
+    //const{nombre,precio,cantidad} = productoCarrito;
+    
     for(let lista of carrito){
         fila.innerHTML = `<td class="nomProdCarrito">${lista.nombre}</td>
                         <td class="precioCarrito" id="preCar"> ${lista.precio}</td>
                         <td class="cantidadCarrito" id="cantCar">${lista.cantidad}</td>
                         <td><button class="btn-success AgregarElementoCarrito">Agregar</button></td>
                         <td><button class="btn-danger borrarElementoCarrito">Borrar</button></td>`;
-
-        
-        let tabla = document.getElementById("tablaCarrito");
-        tabla.append(fila);
+        let tablaCarr = document.getElementById("tbodyCarrito");
+        tablaCarr.append(fila);
     }
 
     let botonesBorrar = document.querySelectorAll(".borrarElementoCarrito");
@@ -292,33 +288,64 @@ function mostrarCarrito( productoCarrito){
 }
 
 function borrarProductoCarrito(e){
-    let trCarrito = e.target.parentNode.parentNode;
-    trCarrito.remove();
+    let filaDelete = e.target.parentNode.parentNode;
+    let tdValorNombre = filaDelete.firstElementChild.innerHTML;
+    let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
+
+    //con el if controlo que no se agregue el mismo nombre del producto. 1= true
+    if (duplicado.length ===1){
+        // con el for busco la coincidencia para borrar con el metodo splice
+        for(var i = carrito.length - 1; i >= 0; i--) { 
+            if(carrito[i].nombre === tdValorNombre) 
+            { carrito.splice(i, 1); } }
+
+        mostrarMensaje("eliminado de la base,","danger");
+        document.getElementById("form-productos").reset();
+        
+    }
+    filaDelete.remove();
 }
 
 function AgregarElementoCarrito(e){
-    let filaSumaElemento = e.target.parentNode.parentNode;
-    let tdValorNombre = filaSumaElemento.firstElementChild.innerHTML;
+   //let filaSumaElemento = e.target.parentNode.parentNode;
+   //let tdValorNombre = filaSumaElemento.firstElementChild.innerHTML;
     
     
-    let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
+   //let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
     
     //obtengo los valores a traves de la clase de cada uno de los td.
     //let nombreProductoCarr = filaSumaElemento.querySelector(".nomProdCarrito").textContent;
-    let precioProductoCar = parseInt(filaSumaElemento.querySelector(".precioCarrito").textContent);
-    let cantidadProductoCar = filaSumaElemento.querySelector(".cantidadCarrito").textContent;
+    //let precioProductoCar = parseInt(filaSumaElemento.querySelector(".precioCarrito").textContent);
+    //let cantidadProductoCar = filaSumaElemento.querySelector(".cantidadCarrito").textContent;
   
-    if (duplicado.length ===1){
+   /* if (duplicado.length ===1){
         precioProductoCar +=precioProductoCar  ;
         cantidadProductoCar++;
-        //document.getElementById("preCar").value = precioProductoCar;
-        //document.getElementById("cantCar").value = cantidadProductoCar;
-        let elementoIndex = baseProductos.findIndex((obj => obj.getNombre() === tdValorNombre));
+        document.getElementById("preCar").value = precioProductoCar;
+        document.getElementById("cantCar").value = cantidadProductoCar;
+        let elementoIndex = carrito.findIndex((obj => obj.nombre === tdValorNombre));
         carrito[elementoIndex].cantidad = cantidadProductoCar;
         carrito[elementoIndex].precio= precioProductoCar;
+    }*/
+/****************************************************************************** */
+
+        let filaSumaElemento = e.target.parentNode.parentNode;
+        let tdValorNombre = filaSumaElemento.firstElementChild.innerHTML;
+        let duplicado = carrito.filter(prod =>prod.nombre === tdValorNombre);
+        
+        
+        //obtengo los valores a traves de la clase de cada uno de los td.
+        let precioProductoCar = parseInt(filaSumaElemento.querySelector(".precioCarrito").textContent);
+        let cantidadProductoCar = filaSumaElemento.querySelector(".cantidadCarrito").textContent;
+
+        precioProductoCar +=precioProductoCar  ;
+        cantidadProductoCar++;
+        if (duplicado.length ===1){
+            document.getElementById("preCar").value = precioProductoCar;
+            document.getElementById("cantCar").value = cantidadProductoCar;
+            let elementoIndex = carrito.findIndex((obj => obj.nombre === tdValorNombre));
     }
 }
-
 
 //const now = DateTime.now();
 
